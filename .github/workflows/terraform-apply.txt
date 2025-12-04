@@ -24,7 +24,6 @@ env:
 jobs:
   apply:
     runs-on: ubuntu-latest
-    environment: production  # optional: gate with environment approvals
 
     steps:
       - uses: actions/checkout@v4
