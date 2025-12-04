@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write   # needed for OIDC
+  id-token: write   # needed for OIDC 
   pull-requests: write  # to post summary/comments (optional)
 
 concurrency:
