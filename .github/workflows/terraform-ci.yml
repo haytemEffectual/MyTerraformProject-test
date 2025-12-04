@@ -18,9 +18,11 @@ env:
   TF_IN_AUTOMATION: "true"
   AWS_REGION: ${{ vars.AWS_REGION }}
   TF_BACKEND_BUCKET: ${{ vars.TF_BACKEND_BUCKET }}
-  TF_BACKEND_KEY: ${{ vars.TF_BACKEND_KEY }}
+  TF_BACKEND_KEY: "terraform.tfstate"
   TF_BACKEND_DDB_TABLE: ${{ vars.TF_BACKEND_DDB_TABLE }}
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  
+  TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
 
 jobs:
   terraform-ci:
@@ -46,7 +48,8 @@ jobs:
             -backend-config="bucket=${TF_BACKEND_BUCKET}" \
             -backend-config="key=${TF_BACKEND_KEY}" \
             -backend-config="region=${AWS_REGION}" \
-            -backend-config="dynamodb_table=${TF_BACKEND_DDB_TABLE}"
+            -backend-config="dynamodb_table=${TF_BACKEND_DDB_TABLE}" \
+            -backend-config="encrypt=true"
 
       - name: Format Check
         run: terraform fmt -check -diff
