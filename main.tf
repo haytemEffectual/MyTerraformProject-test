@@ -1,8 +1,8 @@
 # Add Terraform main resources here
 
-# VPC Configuration
+# VPC Configuration 
 resource "aws_vpc" "main" {
-  cidr_block           = "10.10.11.0/24"
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
 
