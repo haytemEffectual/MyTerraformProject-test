@@ -1,13 +1,12 @@
 name: terraform-ci
 on:
   push:
-    branches-ignore: [main]   # feature branches
+    branches: [main]       # only when merging to main 
   pull_request:
-    branches: [main]          # PRs to main
 
 permissions:
   contents: read
-  id-token: write   # needed for OIDC
+  id-token: write   # needed for OIDC 
   pull-requests: write  # to post summary/comments (optional)
 
 concurrency:
@@ -21,9 +20,11 @@ env:
   TF_BACKEND_KEY: ${{ vars.TF_BACKEND_KEY }}
   TF_BACKEND_DDB_TABLE: ${{ vars.TF_BACKEND_DDB_TABLE }}
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  
+  # TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
 
 jobs:
-  terraform-ci:
+  Terraform:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +47,8 @@ jobs:
             -backend-config="bucket=${TF_BACKEND_BUCKET}" \
             -backend-config="key=${TF_BACKEND_KEY}" \
             -backend-config="region=${AWS_REGION}" \
-            -backend-config="dynamodb_table=${TF_BACKEND_DDB_TABLE}"
+            -backend-config="dynamodb_table=${TF_BACKEND_DDB_TABLE}" \
+            -backend-config="encrypt=true"
 
       - name: Format Check
         run: terraform fmt -check -diff
@@ -54,15 +56,25 @@ jobs:
       - name: Validate
         run: terraform validate
 
-      - name: Plan
-        run: terraform plan -input=false -out=plan.tfplan
+      - name: Trivy
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: config
+          exit-code: 1
+          severity: CRITICAL,HIGH
 
-      - name: Show Plan (for PR readability)
-        if: github.event_name == 'pull_request'
-        run: terraform show -no-color plan.tfplan | tee plan.txt
+      - name: Plan
+        run: terraform plan -input=false -out=plan.tfplan 
+
+      - name: Saving Plan as Artifact
+        run: terraform show -no-color plan.tfplan > plan.txt
 
       - name: Upload Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: plan
           path: plan.txt
+
+      - name: TF Apply
+        run: terraform apply plan.tfplan -no-color 
+        if: github.ref == 'refs/heads/main'
