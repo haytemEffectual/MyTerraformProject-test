@@ -66,8 +66,7 @@ jobs:
       - name: Plan
         run: terraform plan -input=false -out=plan.tfplan 
 
-      - name: Show Plan (for PR readability)
-        if: github.event_name == 'pull_request'
+      - name: Saving Plan as Artifact
         run: terraform show -no-color plan.tfplan > plan.txt
 
       - name: Upload Plan Artifact
