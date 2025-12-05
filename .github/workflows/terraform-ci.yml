@@ -64,7 +64,7 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Plan
-        run: terraform plan -input=false -out=plan.tfplan
+        run: terraform plan -input=false -out=plan.tfplan | tee plan.txt
 
       # - name: Show Plan (for PR readability)
       #   if: github.event_name == 'pull_request'
@@ -75,7 +75,7 @@ jobs:
         with:
           name: plan
           path: plan.txt
-          
+
       - name: TF Apply
         run: terraform apply plan.tfplan -no-color 
         if: github.ref == 'refs/heads/main'
