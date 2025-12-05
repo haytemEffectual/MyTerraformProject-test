@@ -21,7 +21,7 @@ env:
   TF_BACKEND_DDB_TABLE: ${{ vars.TF_BACKEND_DDB_TABLE }}
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
   
-  TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
+  # TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
 
 jobs:
   Terraform:
