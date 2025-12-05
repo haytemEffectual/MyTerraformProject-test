@@ -66,15 +66,16 @@ jobs:
       - name: Plan
         run: terraform plan -input=false -out=plan.tfplan
 
-      - name: Show Plan (for PR readability)
-        if: github.event_name == 'pull_request'
-        run: terraform show -no-color plan.tfplan | tee plan.txt
+      # - name: Show Plan (for PR readability)
+      #   if: github.event_name == 'pull_request'
+      #   run: terraform show -no-color plan.tfplan | tee plan.txt
 
       - name: Upload Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: plan
           path: plan.txt
+          
       - name: TF Apply
         run: terraform apply plan.tfplan -no-color 
         if: github.ref == 'refs/heads/main'
