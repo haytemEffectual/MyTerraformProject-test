@@ -56,6 +56,12 @@ jobs:
       - name: Validate
         run: terraform validate
 
+      - name: super-linter
+        uses: github/super-linter@v8.3.0
+        env:
+          VALIDATE_TERRAFORM: true
+          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+
       - name: Plan
         run: terraform plan -input=false -out=plan.tfplan
 
