@@ -1,7 +1,7 @@
 name: terraform-ci
 on:
   push:
-    branches: [main]       # only when pushing/merging to main 
+    branches: [main]       # only when merging to main 
   pull_request:
 
 permissions:
@@ -24,7 +24,7 @@ env:
   TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
 
 jobs:
-  terraform-plan:
+  terraform-ci:
     runs-on: ubuntu-latest
 
     steps:
